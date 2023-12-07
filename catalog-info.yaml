@@ -6,6 +6,7 @@ metadata:
   annotations:
     github.com/project-slug: veecode-homolog/expressjs-3
     backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: eks-bar2
   links:
     - title: expressjs-3 App
       url: 'http://apps.vkpr.net/expressjs-3'
