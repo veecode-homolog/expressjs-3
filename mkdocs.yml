@@ -1,0 +1,8 @@
+site_name: "expressjs-3"
+site_description: "teste"
+
+nav:
+  - Introduction: index.md
+
+plugins:
+  - techdocs-core
