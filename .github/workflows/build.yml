@@ -183,6 +183,7 @@ jobs:
      #   run: |
      #     aws eks update-kubeconfig --name eks-bar2 --region ${{ secrets.AWS_REGION }}
      #    kubectl apply -f ./k8s 
+
       - name: Write secret to file
         run: |
           echo "${{ secrets.KEYPAIR }}" > cert.pem
@@ -193,8 +194,7 @@ jobs:
 		      HOST=`aws ec2 describe-instances --filters 'Name=tag:Name,Values=testeec2_key'   --output text --query 'Reservations[*].Instances[*].PublicIpAddress'`
 		      ssh -i ./cert.pem -o StrictHostKeyChecking=no $USERNAME@$HOST "mkdir -p .kube && k3d kubeconfig get k3s > ~/.kube/config" 
           echo "Host=$HOST" >> $GITHUB_ENV
-            
- 
+          
       - name: kubeclt apply
         run: |
            mkdir -p ~/.kube
