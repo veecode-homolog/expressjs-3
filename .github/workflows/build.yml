@@ -204,6 +204,7 @@ jobs:
            CERTIFICATE=`cat  ~/.kube/config |grep certificate-authority-data `
            sed -i "s|$CERTIFICATE|    insecure-skip-tls-verify: true|g" ~/.kube/config
            sed -i "s|0.0.0.0|${{ env.Host }}|g" ~/.kube/config
+           kubectl create ns vkpr
            kubectl apply -f ./k8s 
 
       - name: Publish to spec house
