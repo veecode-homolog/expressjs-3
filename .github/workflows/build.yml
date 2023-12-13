@@ -177,11 +177,32 @@ jobs:
               .spec.syncPolicy.automated.prune=true |
               .spec.destination.server="https://kubernetes.default.svc" |
               .spec.destination.namespace="vkpr"''' -i config/expressjs-3.yaml
+              
 
-      - name: k8s apply
+     # - name: k8s apply
+     #   run: |
+     #     aws eks update-kubeconfig --name eks-bar2 --region ${{ secrets.AWS_REGION }}
+     #    kubectl apply -f ./k8s 
+      - name: Write secret to file
         run: |
-          aws eks update-kubeconfig --name eks-bar2 --region ${{ secrets.AWS_REGION }}
-          kubectl apply -f ./k8s 
+          echo "${{ secrets.KEYPAIR }}" > cert.pem
+          chmod 600 cert.pem
+
+      - name: Generate kube config with k3s  		
+        run: |
+		      HOST=`aws ec2 describe-instances --filters 'Name=tag:Name,Values=testeec2_key'   --output text --query 'Reservations[*].Instances[*].PublicIpAddress'`
+		      ssh -i ./cert.pem -o StrictHostKeyChecking=no $USERNAME@$HOST "mkdir -p .kube && k3d kubeconfig get k3s > ~/.kube/config" 
+          echo "Host=$HOST" >> $GITHUB_ENV
+            
+ 
+      - name: kubeclt apply
+        run: |
+           mkdir -p ~/.kube
+           scp -i ./cert.pem -o StrictHostKeyChecking=no $USERNAME@${{ env.Host }}:~/.kube/config ~/.kube/config
+           CERTIFICATE=`cat  ~/.kube/config |grep certificate-authority-data `
+           sed -i "s|$CERTIFICATE|    insecure-skip-tls-verify: true|g" ~/.kube/config
+           sed -i "s|0.0.0.0|${{ env.Host }}|g" ~/.kube/config
+           kubectl apply -f ./k8s 
 
       - name: Publish to spec house
         uses: dmnemec/copy_file_to_another_repo_action@main
