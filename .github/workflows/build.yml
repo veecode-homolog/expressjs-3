@@ -162,7 +162,7 @@ jobs:
           --annotation "nginx.ingress.kubernetes.io/rewrite-target"="/" \
           --annotation "sidecar.opentelemetry.io/inject"="true" \
           --annotation "instrumentation.opentelemetry.io/inject-nodejs"="true" \
-          --rule="expressjs-3*=expressjs-3-service-0:5000" --dry-run=client -o=yaml > ./k8s/ingress.yaml
+          --rule="/expressjs-3*=expressjs-3-service-0:5000" --dry-run=client -o=yaml > ./k8s/ingress.yaml
           #--rule="apps.vkpr.net/expressjs-3*=expressjs-3-service-0:5000" --dry-run=client -o=yaml > ./k8s/ingress.yaml
           yq e 'del(.metadata.creationTimestamp) | del(.status)' -i ./k8s/ingress.yaml
           yq e '.metadata.labels."backstage.io/kubernetes-id"="expressjs-3"' -i ./k8s/ingress.yaml
